@@ -4,7 +4,8 @@ import commonjs from 'rollup-plugin-commonjs';
 import svelte from 'rollup-plugin-svelte';
 import babel from 'rollup-plugin-babel';
 import { terser } from 'rollup-plugin-terser';
-import config from 'sapper/config/rollup.js';
+import copy from 'rollup-plugin-copy';
+import config from '@ourcanopy/sapper/config/rollup.js';
 import pkg from './package.json';
 
 const mode = process.env.NODE_ENV;
@@ -59,6 +60,12 @@ export default {
 		input: config.server.input(),
 		output: config.server.output(),
 		plugins: [
+			copy({
+		 		targets: [
+		 			{ src: 'static/**/*', dest: `${config.server.output().dir}/static` }
+		 		],
+		 		verbose: true
+		 	}),
 			replace({
 				'process.browser': false,
 				'process.env.NODE_ENV': JSON.stringify(mode)
@@ -66,6 +73,10 @@ export default {
 			svelte({
 				generate: 'ssr',
 				dev
+			}),
+			replace({
+				'bazel-out/darwin-fastbuild/bin': './',
+				delimiters: ['', '']
 			}),
 			resolve(),
 			commonjs()

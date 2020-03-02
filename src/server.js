@@ -8,7 +8,6 @@ import * as sapper from '@sapper/server';
 
 const FileStore = sessionFileStore(session);
 
-
 const { PORT, NODE_ENV } = process.env;
 const dev = NODE_ENV === 'development';
 
@@ -27,7 +26,7 @@ polka()
 	}))
 	.use(
 		compression({ threshold: 0 }),
-		sirv('static', { dev }),
+		sirv('bundle/server/static', { dev }),
 		sapper.middleware({
 			session: req => ({
 				user: req.session && req.session.user
